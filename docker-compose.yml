@@ -1,0 +1,33 @@
+version: '3'
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '3000:3333'
+    volumes:
+      - .:/app
+    depends_on:
+      - mariadb
+    environment:
+      - NLS_LANG=.AL32UTF8
+      - NLS_DATE_FORMAT=YYYY-MM-DD
+      - NLS_TIMESTAMP_FORMAT=YYYY-MM-DD HH24:MI:SS"TZR"
+    networks:
+      - hector
+  mariadb:
+    image: mariadb:11.1.2
+    environment:
+      MARIADB_ROOT_PASSWORD: root
+      MARIADB_DATABASE: hector_db
+      MARIADB_USER: root
+    ports:
+      - 3306:3306
+    volumes:
+      - ./database/mariadb:/docker-entrypoint-initdb.d
+    networks:
+      - hector
+networks:
+  hector:
+    driver: bridge
